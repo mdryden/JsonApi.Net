@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace mbsoft.JsonApi
+namespace mdryden.JsonApi
 {
     public class JsonApiException : Exception
     { 

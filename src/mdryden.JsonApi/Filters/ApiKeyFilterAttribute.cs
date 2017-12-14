@@ -1,4 +1,4 @@
-﻿using mbsoft.JsonApi.Models;
+﻿using mdryden.JsonApi.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace mbsoft.JsonApi.Filters
+namespace mdryden.JsonApi.Filters
 {
     public class ApiKeyFilterAttribute : ActionFilterAttribute
     {
@@ -21,36 +21,50 @@ namespace mbsoft.JsonApi.Filters
             this.keyCollection = keyCollection;
         }
 
-        public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        private bool IsKeyValid(HttpContext httpContext)
         {
-
-            if (!context.HttpContext.Request.Query.ContainsKey("key"))
+            if (!httpContext.Request.Query.ContainsKey("key"))
             {
-                return InvalidKey(context.HttpContext);
+                return false;
             }
 
-            if (!Guid.TryParse(context.HttpContext.Request.Query["key"], out var key))
+            if (!Guid.TryParse(httpContext.Request.Query["key"], out var key))
             {
-                return InvalidKey(context.HttpContext);
+                return false;
             }
             
-
-            //var keys = context.HttpContext.RequestServices.GetService<JsonApiKeyCollection>();
-
             var matchedKey = keyCollection.Value.FirstOrDefault(k => k.Key == key);
 
             if (matchedKey == null || matchedKey.Revoked)
             {
-                return InvalidKey(context.HttpContext);
+                return false;
             }
 
-            return base.OnActionExecutionAsync(context, next);
+            return true;
         }
 
-        private Task InvalidKey(HttpContext context)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var responseWriter = new JsonApiResponseWriter();
-            return responseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context);
+            if (!IsKeyValid(context.HttpContext))
+            {
+                var responseWriter = new JsonApiResponseWriter();
+                responseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext).Wait();
+            }
+            else
+            {
+                base.OnActionExecuting(context);
+            }
         }
+
+        public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            if (!IsKeyValid(context.HttpContext))
+            {
+                var responseWriter = new JsonApiResponseWriter();
+                return responseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext);
+            }
+            return base.OnActionExecutionAsync(context, next);
+        }
+        
     }
 }

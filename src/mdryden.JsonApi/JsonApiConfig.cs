@@ -1,6 +1,6 @@
-﻿using mbsoft.JsonApi.Filters;
-using mbsoft.JsonApi.Formatters;
-using mbsoft.JsonApi.Models;
+﻿using mdryden.JsonApi.Filters;
+using mdryden.JsonApi.Formatters;
+using mdryden.JsonApi.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddMvc(option =>
             {
                 option.OutputFormatters.Insert(0, new JsonApiFormatter());
+                option.Filters.Add(typeof(ApiExceptionFilterAttribute));
             });
 
             return services;
