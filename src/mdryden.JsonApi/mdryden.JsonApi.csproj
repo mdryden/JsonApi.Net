@@ -11,6 +11,10 @@
     <PackageProjectUrl>https://github.com/pudds/JsonApi.Net</PackageProjectUrl>
     <Copyright>Michael Dryden</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.2</Version>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Description>A simple set of helper classes for the JsonAPI services I create.  Use .AddJsonApi() method in startup to configure.  Uses a formatter and exception filter to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
   </PropertyGroup>
 
   <ItemGroup>
