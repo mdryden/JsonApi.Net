@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace mdryden.JsonApi.xUnit
         
         private ApiExceptionFilterAttribute GetTarget()
         {
-            return new ApiExceptionFilterAttribute();
+            var logger = new Mock<ILogger<ApiExceptionFilterAttribute>>();
+            return new ApiExceptionFilterAttribute(logger.Object);
         }
 
         private ExceptionContext GetContext(Exception ex)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace mdryden.JsonApi.Filters
 {
@@ -15,31 +16,48 @@ namespace mdryden.JsonApi.Filters
     {
 
         private IOptions<JsonApiKeyCollection> keyCollection;
+        private ILogger logger;
 
-        public ApiKeyFilterAttribute(IOptions<JsonApiKeyCollection> keyCollection)
+        public ApiKeyFilterAttribute(IOptions<JsonApiKeyCollection> keyCollection, ILogger<ApiKeyFilterAttribute> logger)
         {
             this.keyCollection = keyCollection;
+            this.logger = logger;
+        }
+
+        private void LogInvalidKey(HttpContext httpContext, string reason)
+        {
+            logger.LogWarning($"Request for {httpContext.Request.Path} was denied: {reason}");
         }
 
         private bool IsKeyValid(HttpContext httpContext)
         {
             if (!httpContext.Request.Query.ContainsKey("key"))
             {
+                LogInvalidKey(httpContext, "no key was given.");
                 return false;
             }
 
-            if (!Guid.TryParse(httpContext.Request.Query["key"], out var key))
+            var keyValue = httpContext.Request.Query["key"];
+            if (!Guid.TryParse(keyValue, out var key))
             {
+                LogInvalidKey(httpContext, $"provided key '{keyValue}' is not a guid.");
                 return false;
             }
             
             var matchedKey = keyCollection.Value.FirstOrDefault(k => k.Key == key);
 
-            if (matchedKey == null || matchedKey.Revoked)
+            if (matchedKey == null)
             {
+                LogInvalidKey(httpContext, $"provided key '{key}' is not valid.");
                 return false;
             }
 
+            if (matchedKey.Revoked)
+            {
+                LogInvalidKey(httpContext, $"provided key '{key}' has been revoked.");
+            }
+
+            logger.LogInformation($"Request for '{httpContext.Request.Path}' was accepted with key '{key}'.");
             return true;
         }
 

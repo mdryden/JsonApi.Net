@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using System;
@@ -25,7 +26,8 @@ namespace mdryden.JsonApi.xUnit
                 { new JsonApiKey { Key = key, Revoked = revoked, Details = "Unit test key" } }
             };
 
-            return new ApiKeyFilterAttribute(Options.Create(apiKeys));
+            var logger = new Mock<ILogger<ApiKeyFilterAttribute>>();
+            return new ApiKeyFilterAttribute(Options.Create(apiKeys), logger.Object);
         }
 
         private ActionExecutingContext CreateActionExecutingContext(QueryString queryString)
