@@ -16,6 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddMvc(option =>
             {
                 option.OutputFormatters.Insert(0, new JsonApiFormatter());
+				option.Filters.Add(typeof(ApiExceptionFilterAttribute));
             });
 
             services.AddScoped<ApiExceptionFilterAttribute>();
