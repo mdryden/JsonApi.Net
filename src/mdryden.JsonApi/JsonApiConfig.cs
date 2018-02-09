@@ -30,6 +30,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<JsonApiKeyCollection>(apiKeysSection);
             services.AddScoped<ApiKeyFilterAttribute>();
 
+			services.AddMvc(option =>
+			{
+				option.Filters.Add(typeof(ApiKeyFilterAttribute));
+			});
+
             return services;
         }
 

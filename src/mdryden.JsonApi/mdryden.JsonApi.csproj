@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/pudds/JsonApi.Net</PackageProjectUrl>
     <Copyright>Michael Dryden</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.0.4</Version>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
     <Description>A simple set of helper classes for the JsonAPI services I create.  Use .AddJsonApi() method in startup to configure.  Uses a formatter and exception filter to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
-    <PackageReleaseNotes>Added api exception filter attribute to controllers mvc pipeline config.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added api key exception filter attribute to controllers mvc pipeline config when keys are provided</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
