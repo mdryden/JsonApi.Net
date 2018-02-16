@@ -5,52 +5,21 @@ using System.Text;
 
 namespace mdryden.JsonApi
 {
-	public static class ApiResponseExtensions
+	public static class ApiResponseResourceExtensions
 	{
-		public static void AddError(this ApiResponse response, Error error)
-		{
-			if (response.Errors == null)
-			{
-				response.Errors = new ErrorCollection();
-			}
 
-			response.Errors.Add(error);			
+		public static T GetResourceAs<T>(this ApiResponse response)
+		{
+			var resource = response.Data as Resource;
+
+			return (T)resource?.Attributes;
 		}
 
-		public static T GetResourceAs<T>(this ApiResponse response) where T : class
+		public static IEnumerable<T> GetResourceAsEnumerableOf<T>(this ApiResponse response)
 		{
-			return (response.Data as Resource)?.Attributes as T;
+			return (response.Data as IEnumerable<Resource>)?.Select(item => (T)item.Attributes);
 		}
-
-		public static ApiResponse WithError(this ApiResponse response, Action<Error> errorConfig)
-		{
-			var error = new Error();
-			errorConfig.Invoke(error);
-			response.AddError(error);
-			return response;
-		}
-
-		public static ApiResponse WithLink(this ApiResponse response, string key, string href)
-		{
-			response.AddLink(key, href);
-			return response;
-		}
-
-		public static ApiResponse WithLink(this ApiResponse response, string key, string href, Action<Link> linkConfig)
-		{
-			var link = new Link { Href = href };
-			linkConfig.Invoke(link);
-			response.AddLink(key, link);
-			return response;
-		}
-
-
-		public static ApiResponse WithMeta(this ApiResponse response, string key, object value)
-		{
-			response.AddMeta(key, value);
-			return response;
-		}
-
+		
 		public static ApiResponse WithResource<T>(this ApiResponse response, T data, string id)
 		{
 			var type = typeof(T).Name.ToLower();
