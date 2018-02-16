@@ -11,12 +11,11 @@
     <PackageProjectUrl>https://github.com/pudds/JsonApi.Net</PackageProjectUrl>
     <Copyright>Michael Dryden</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>2.1.0-rc4</Version>
+    <Version>2.1.0-rc5</Version>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <FileVersion>2.1.0.0</FileVersion>
     <Description>A library for JsonAPI services.  Use .AddJsonApi() method in startup to configure.  Uses interfaces along with formatters and filters to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
-    <PackageReleaseNotes>Add errors helper method
-Add JsonServiceClient</PackageReleaseNotes>
+    <PackageReleaseNotes>Inconsistencies in client</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

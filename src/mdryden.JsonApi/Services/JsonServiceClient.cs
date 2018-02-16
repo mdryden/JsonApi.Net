@@ -86,19 +86,7 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		public async Task<IApiResponse> PostAsync<T>(Uri uri, T content)
-		{
-			var jsonObject = JsonConvert.SerializeObject(content);
-			var stringContent = CreateContent(jsonObject);
-
-			using (var client = new HttpClient())
-			{
-				var response = await client.PostAsync(uri, stringContent);
-				return await TryReadResponseAsync(response);
-			}
-		}
-
-		public async Task<IApiItemResponse> PostWithItemResponseAsync<T>(Uri uri, T content)
+		public async Task<IApiItemResponse> PostResourceAsync<T>(Uri uri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
@@ -110,7 +98,7 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		public async Task<IApiItemResponse> PutAsync<T>(Uri uri, T content)
+		public async Task<IApiItemResponse> PutResourceAsync<T>(Uri uri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
