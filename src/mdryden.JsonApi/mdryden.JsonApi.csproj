@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/pudds/JsonApi.Net</PackageProjectUrl>
     <Copyright>Michael Dryden</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>2.1.0-rc2</Version>
+    <Version>2.1.0-rc3</Version>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <FileVersion>2.1.0.0</FileVersion>
-    <Description>A simple set of helper classes for the JsonAPI services I create.  Use .AddJsonApi() method in startup to configure.  Uses a formatter and exception filter to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
-    <PackageReleaseNotes>Remove ResponseCode property in favor of a meta data entry.  Response code can be accessed via IApiResponse.ResponseCode() extension method.</PackageReleaseNotes>
+    <Description>A library for JsonAPI services.  Use .AddJsonApi() method in startup to configure.  Uses interfaces along with formatters and filters to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
+    <PackageReleaseNotes>Make GetResource extensions work with deserialized resources</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

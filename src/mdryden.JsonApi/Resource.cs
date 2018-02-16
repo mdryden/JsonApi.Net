@@ -5,7 +5,7 @@ using System.Text;
 
 namespace mdryden.JsonApi
 {
-    public class Resource
+	public class Resource
     {
 		[JsonProperty("type")]
 		public string Type { get; set; }
@@ -22,13 +22,4 @@ namespace mdryden.JsonApi
 		[JsonProperty("meta", NullValueHandling = NullValueHandling.Ignore)]
 		public MetaCollection Meta { get; set; }
     }
-
-	public static class ResourceExtensions
-	{
-		public static Resource WithAttributes(this Resource resource, object attributesObject)
-		{
-			resource.Attributes = attributesObject;
-			return resource;
-		}
-	}
 }

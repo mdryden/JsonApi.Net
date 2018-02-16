@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,15 +9,31 @@ namespace mdryden.JsonApi
 {
 	public static class ApiResponseResourceExtensions
 	{
+		private static T GetAttributesAs<T>(object attributes)
+		{
+			if (attributes == null)
+			{
+				return default(T);
+			}
+
+			if (attributes is JObject json)
+			{
+				return json.ToObject<T>();
+			}
+			else
+			{
+				return (T)attributes;
+			}
+		}
 
 		public static T GetResourceAs<T>(this IApiItemResponse response)
 		{
-			return (T)response.Data?.Attributes;
+			return GetAttributesAs<T>(response?.Data?.Attributes);
 		}
 
 		public static IEnumerable<T> GetResourcesAs<T>(this IApiCollectionResponse response)
 		{
-			return response.DataCollection?.Select(item => (T)item.Attributes);
+			return response.DataCollection?.Select(item => GetAttributesAs<T>(item.Attributes));
 		}
 		
 		public static ApiResponseBuilder WithResource<T>(this ApiResponseBuilder response, T data, string id)

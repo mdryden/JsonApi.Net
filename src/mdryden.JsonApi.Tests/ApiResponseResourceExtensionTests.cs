@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,6 +70,40 @@ namespace mdryden.JsonApi.Tests
 			var output = response.GetResourcesAs<MockStruct>();
 
 			Assert.Equal(input.Count, output.Count());
+		}
+
+		[Fact]
+		public void GetResourceAsStructAfterSerializationTest()
+		{
+			var input = new MockStruct { Id = "1", Value = "Mock" };
+
+			var response = ApiResponse.OK().WithResource(input, input.Id).AsItemResponse();
+			
+			var serialized = JsonConvert.SerializeObject(response);
+
+			var deserialized = JsonConvert.DeserializeObject<ApiItemResponse>(serialized);
+
+			var output = deserialized.GetResourceAs<MockStruct>();
+
+			Assert.Equal(input.Id, output.Id);
+		}
+
+		[Fact]
+		public void GetResourceAsStructArrayAfterSerializationTest()
+		{
+			var input1 = new MockStruct { Id = "1", Value = "Mock" };
+			var input2 = new MockStruct { Id = "2", Value = "Mock 2" };
+			var input = new[] { input1, input2 };
+
+			var response = ApiResponse.OK().WithResources(input, (item) => item.Id).AsCollectionResponse();
+
+			var serialized = JsonConvert.SerializeObject(response);
+
+			var deserialized = JsonConvert.DeserializeObject<ApiCollectionResponse>(serialized);
+
+			var output = deserialized.GetResourcesAs<MockStruct>();
+
+			Assert.Equal(input.Length, output.Count());
 		}
 
 	}
