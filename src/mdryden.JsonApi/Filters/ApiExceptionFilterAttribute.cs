@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,39 +11,38 @@ using System.Threading.Tasks;
 
 namespace mdryden.JsonApi.Filters
 {
-    public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
-    {
+	public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
+	{
 
-        private ILogger logger;
+		ILogger logger;
+		IDefaultMetaDataRetriever defaultMetaDataRetriever;
 
-        public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger)
-        {
-            this.logger = logger;
-        }
+		public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger, IDefaultMetaDataRetriever defaultMetaDataRetriever)
+		{
+			this.logger = logger;
+			this.defaultMetaDataRetriever = defaultMetaDataRetriever;
+		}
 
-        public override void OnException(ExceptionContext context)
-        {
-            OnExceptionAsync(context).Wait();
-        }
+		public override void OnException(ExceptionContext context)
+		{
+			var apiError = context.Exception as JsonApiException;
 
-        public override Task OnExceptionAsync(ExceptionContext context)
-        {
-            var responseWriter = new JsonApiResponseWriter();
+			var responseCode = apiError?.Status ?? HttpStatusCode.InternalServerError;
+			var detail = apiError?.Message ?? context.Exception.Message;
 
-            var apiError = context.Exception as JsonApiException;
+			context.ExceptionHandled = true;
 
-            context.ExceptionHandled = true;
+			logger.LogError($"Request for '{context.HttpContext.Request.Path}' threw an exception: '{context.Exception}");
 
-            logger.LogError($"Request for '{context.HttpContext.Request.Path}' threw an exxeption: '{context.Exception}");
+			var response = ApiResponse.Create(responseCode).WithError(error =>
+			{
+				error.WithStatus(responseCode).WithDetail(detail);
+			});
 
-            if (apiError != null)
-            {
-                return responseWriter.WriteErrorAsync(apiError.Code, apiError.Message, context.HttpContext);
-            }
-            else
-            {
-                return responseWriter.WriteErrorAsync(HttpStatusCode.InternalServerError, context.Exception.Message, context.HttpContext);
-            }
-        }
-    }
+			response.AddMeta(defaultMetaDataRetriever.GetDefaultMetaData());
+
+			context.Result = new ObjectResult(response);
+		}
+		
+	}
 }

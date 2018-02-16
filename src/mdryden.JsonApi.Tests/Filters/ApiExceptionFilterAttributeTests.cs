@@ -12,7 +12,7 @@ using System.Net;
 using System.Text;
 using Xunit;
 
-namespace mdryden.JsonApi.xUnit
+namespace mdryden.JsonApi.Tests
 {
     public class ApiExceptionFilterAttributeTests
     {
@@ -20,7 +20,9 @@ namespace mdryden.JsonApi.xUnit
         private ApiExceptionFilterAttribute GetTarget()
         {
             var logger = new Mock<ILogger<ApiExceptionFilterAttribute>>();
-            return new ApiExceptionFilterAttribute(logger.Object);
+			var defaultMetaDataRetriever = new Mock<IDefaultMetaDataRetriever>();
+
+			return new ApiExceptionFilterAttribute(logger.Object, defaultMetaDataRetriever.Object);
         }
 
         private ExceptionContext GetContext(Exception ex)
@@ -50,10 +52,10 @@ namespace mdryden.JsonApi.xUnit
 
             exceptionHandlingAttribute.OnException(context);
 
-            var expected = (int)HttpStatusCode.InternalServerError;
-            var actual = context.HttpContext.Response.StatusCode;
+            var expected = HttpStatusCode.InternalServerError;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
 
-            Assert.Equal(expected, actual);
+			Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -66,10 +68,31 @@ namespace mdryden.JsonApi.xUnit
 
             exceptionHandlingAttribute.OnException(context);
 
-            var expected = (int)apiException.Code;
-            var actual = context.HttpContext.Response.StatusCode;
+			var expected = apiException.Status;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
 
-            Assert.Equal(expected, actual);
-        }
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void DefaultMetaAddedToExceptions()
+		{
+			var logger = new Mock<ILogger<ApiExceptionFilterAttribute>>();
+			var defaultMetaDataRetriever = new Mock<IDefaultMetaDataRetriever>();
+			defaultMetaDataRetriever.Setup(r => r.GetDefaultMetaData()).Returns(new MetaCollection { { "mock", "meta" } });
+
+			var target = new ApiExceptionFilterAttribute(logger.Object, defaultMetaDataRetriever.Object);
+
+			var testException = new NotImplementedException();
+
+			var context = GetContext(testException);
+
+			target.OnException(context);
+
+			var response = (context.Result as ObjectResult)?.Value as ApiResponse;
+
+			Assert.Contains(response.Meta, m => m.Key == "mock");
+			
+		}
     }    
 }

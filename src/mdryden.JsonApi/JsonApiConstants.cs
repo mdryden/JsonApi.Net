@@ -8,5 +8,7 @@ namespace mdryden.JsonApi
     public static class JsonApiConstants
     {
         public const string ContentType = "application/vnd.api+json";
+
+		public const string SelfLinkKey = "self";
     }
 }

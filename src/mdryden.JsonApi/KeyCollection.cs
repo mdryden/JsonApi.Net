@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace mdryden.JsonApi.Models
+namespace mdryden.JsonApi
 {
-    public class JsonApiKeyCollection : List<JsonApiKey>
+    public class KeyCollection : List<ApiKey>
     {
     }
 }

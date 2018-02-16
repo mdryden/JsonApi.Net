@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace mdryden.JsonApi.Models
+namespace mdryden.JsonApi
 {
-    public class JsonApiKey
+    public class ApiKey
     {
         public Guid Key { get; set; }
 

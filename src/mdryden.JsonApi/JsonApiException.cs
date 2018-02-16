@@ -8,17 +8,17 @@ namespace mdryden.JsonApi
 {
     public class JsonApiException : Exception
     { 
-        public HttpStatusCode Code { get; private set; }
+        public HttpStatusCode Status { get; private set; }
 
-        public JsonApiException(HttpStatusCode code)
+        public JsonApiException(HttpStatusCode status)
         {
-            this.Code = code;
+            Status = status;
         }
 
-        public JsonApiException(HttpStatusCode code, string message)
+        public JsonApiException(HttpStatusCode status, string message)
             : base(message)
         {
-            this.Code = code;
+            Status = status;
         }
     }
 }

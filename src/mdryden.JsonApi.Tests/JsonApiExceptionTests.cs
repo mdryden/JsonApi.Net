@@ -3,7 +3,7 @@ using System;
 using System.Net;
 using Xunit;
 
-namespace mdryden.JsonApi.xUnit
+namespace mdryden.JsonApi.Tests
 {
     public class JsonApiExceptionTests
     {
@@ -12,7 +12,7 @@ namespace mdryden.JsonApi.xUnit
         {
             var expected = HttpStatusCode.OK;
             var target = new JsonApiException(expected);
-            var actual = target.Code;
+			var actual = target.Status;
 
             Assert.Equal(expected, actual);
         }

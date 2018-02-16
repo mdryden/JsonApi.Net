@@ -1,5 +1,4 @@
 ﻿using mdryden.JsonApi.Filters;
-using mdryden.JsonApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -13,21 +12,22 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace mdryden.JsonApi.xUnit
+namespace mdryden.JsonApi.Tests
 {
     public class ApiKeyFilterAttributeTests
     {
         private ApiKeyFilterAttribute GetTarget(Guid key, bool revoked = false)
         {
-            var apiKeys = new JsonApiKeyCollection
+            var apiKeys = new KeyCollection
             {
-                { new JsonApiKey { Key = key, Revoked = revoked, Details = "Unit test key" } }
+                { new ApiKey { Key = key, Revoked = revoked, Details = "Unit test key" } }
             };
 
             var logger = new Mock<ILogger<ApiKeyFilterAttribute>>();
-            return new ApiKeyFilterAttribute(Options.Create(apiKeys), logger.Object);
+            return new ApiKeyFilterAttribute(logger.Object, apiKeys);
         }
 
         private ActionExecutingContext CreateActionExecutingContext(QueryString queryString)
@@ -48,22 +48,7 @@ namespace mdryden.JsonApi.xUnit
 
             return context;
         }
-
-
-        [Fact]
-        public void MissingKeyAsyncTest()
-        {
-            var target = GetTarget(Guid.Empty);
-            var context = CreateActionExecutingContext(QueryString.Empty);
-            
-            target.OnActionExecutionAsync(context, null).Wait();
-
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
-
-            Assert.Equal(expected, actual);
-        }
-        
+		        
         [Fact]
         public void MissingKeyTest()
         {
@@ -72,25 +57,10 @@ namespace mdryden.JsonApi.xUnit
 
             target.OnActionExecuting(context);
 
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
+            var expected = HttpStatusCode.Forbidden;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
 
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void InvalidKeyAsyncTest()
-        {
-            var validKey = Guid.NewGuid();
-            var target = GetTarget(validKey);
-            var context = CreateActionExecutingContext(new QueryString($"?key={Guid.NewGuid().ToString()}"));
-            
-            target.OnActionExecutionAsync(context, null).Wait();
-
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
-
-            Assert.Equal(expected, actual);
+			Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -102,23 +72,8 @@ namespace mdryden.JsonApi.xUnit
 
             target.OnActionExecuting(context);
 
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void NotAGuidAsyncTest()
-        {
-            var validKey = Guid.NewGuid();
-            var target = GetTarget(validKey);
-            var context = CreateActionExecutingContext(new QueryString($"?key=12345"));
-
-            target.OnActionExecutionAsync(context, null).Wait();
-
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
+            var expected = HttpStatusCode.Forbidden;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
 
             Assert.Equal(expected, actual);
         }
@@ -132,10 +87,10 @@ namespace mdryden.JsonApi.xUnit
 
             target.OnActionExecuting(context);
 
-            var expected = (int)HttpStatusCode.Forbidden;
-            var actual = context.HttpContext.Response.StatusCode;
+            var expected = HttpStatusCode.Forbidden;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
 
-            Assert.Equal(expected, actual);
+			Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -147,10 +102,10 @@ namespace mdryden.JsonApi.xUnit
 
             target.OnActionExecuting(context);
 
-            var expected = (int)HttpStatusCode.OK;
-            var actual = context.HttpContext.Response.StatusCode;
+            var expected = false;
+			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.HasErrors() == true;
 
-            Assert.Equal(expected, actual);
+			Assert.Equal(expected, actual);
         }
 
         [Fact]

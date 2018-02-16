@@ -1,5 +1,4 @@
-﻿using mdryden.JsonApi.Models;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,18 +8,19 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
 
 namespace mdryden.JsonApi.Filters
 {
     public class ApiKeyFilterAttribute : ActionFilterAttribute
     {
 
-        private IOptions<JsonApiKeyCollection> keyCollection;
+        private KeyCollection keyCollection;
         private ILogger logger;
 
-        public ApiKeyFilterAttribute(IOptions<JsonApiKeyCollection> keyCollection, ILogger<ApiKeyFilterAttribute> logger)
+        public ApiKeyFilterAttribute(ILogger<ApiKeyFilterAttribute> logger, KeyCollection keyCollection)
         {
-            this.keyCollection = keyCollection;
+			this.keyCollection = keyCollection;
             this.logger = logger;
         }
 
@@ -44,7 +44,7 @@ namespace mdryden.JsonApi.Filters
                 return false;
             }
             
-            var matchedKey = keyCollection.Value.FirstOrDefault(k => k.Key == key);
+            var matchedKey = keyCollection.FirstOrDefault(k => k.Key == key);
 
             if (matchedKey == null)
             {
@@ -65,8 +65,14 @@ namespace mdryden.JsonApi.Filters
         {
             if (!IsKeyValid(context.HttpContext))
             {
-                var responseWriter = new JsonApiResponseWriter();
-                responseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext).Wait();
+				//errorResponseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext).Wait();
+				var response = ApiResponse.Create(HttpStatusCode.Forbidden).WithError(error =>
+				{
+					error.Status = HttpStatusCode.Forbidden;
+					error.Detail = "API key is missing or invalid";
+				});
+
+				context.Result = new ObjectResult(response);
             }
             else
             {
@@ -74,15 +80,14 @@ namespace mdryden.JsonApi.Filters
             }
         }
 
-        public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            if (!IsKeyValid(context.HttpContext))
-            {
-                var responseWriter = new JsonApiResponseWriter();
-                return responseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext);
-            }
-            return base.OnActionExecutionAsync(context, next);
-        }
+        //public override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        //{
+        //    if (!IsKeyValid(context.HttpContext))
+        //    {
+        //        return errorResponseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext);
+        //    }
+        //    return base.OnActionExecutionAsync(context, next);
+        //}
         
     }
 }
