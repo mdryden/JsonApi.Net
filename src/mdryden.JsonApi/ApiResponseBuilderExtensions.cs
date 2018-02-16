@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 
 namespace mdryden.JsonApi
 {
@@ -9,6 +10,21 @@ namespace mdryden.JsonApi
 			var error = new Error();
 			errorConfig.Invoke(error);
 			responseBuilder.AddError(error);
+			return responseBuilder;
+		}
+
+		public static ApiResponseBuilder WithErrors(this ApiResponseBuilder responseBuilder, ModelStateDictionary modelStateErrors)
+		{
+			foreach (var validationErrorKvp in modelStateErrors)
+			{
+				var key = validationErrorKvp.Key;
+				var validationErrors = validationErrorKvp.Value.Errors;
+				foreach (var validationError in validationErrors)
+				{
+					responseBuilder.WithError(error => error.WithCode(key).WithDetail(validationError.ErrorMessage));
+				}
+			}
+
 			return responseBuilder;
 		}
 
