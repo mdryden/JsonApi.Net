@@ -17,6 +17,12 @@ namespace mdryden.JsonApi
 		{
 			ResponseCode = responseCode;
 		}
+		
+		[JsonConstructor]
+		private ApiResponse()
+		{
+
+		}
 
 		[JsonIgnore]
 		public HttpStatusCode ResponseCode { get; set; }
