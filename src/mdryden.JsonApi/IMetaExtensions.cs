@@ -1,6 +1,6 @@
 ﻿namespace mdryden.JsonApi
 {
-	public static class MetaExtensions
+	public static class IMetaExtensions
 	{
 		public static void AddMeta(this IMeta target, string key, object value)
 		{
