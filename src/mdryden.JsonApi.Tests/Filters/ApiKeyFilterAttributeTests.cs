@@ -58,7 +58,7 @@ namespace mdryden.JsonApi.Tests
             target.OnActionExecuting(context);
 
             var expected = HttpStatusCode.Forbidden;
-			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode;
+			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode();
 
 			Assert.Equal(expected, actual);
         }
@@ -73,7 +73,7 @@ namespace mdryden.JsonApi.Tests
             target.OnActionExecuting(context);
 
             var expected = HttpStatusCode.Forbidden;
-			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode;
+			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode();
 
             Assert.Equal(expected, actual);
         }
@@ -88,7 +88,7 @@ namespace mdryden.JsonApi.Tests
             target.OnActionExecuting(context);
 
             var expected = HttpStatusCode.Forbidden;
-			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode;
+			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode();
 
 			Assert.Equal(expected, actual);
         }

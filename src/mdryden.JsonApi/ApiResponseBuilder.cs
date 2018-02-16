@@ -55,9 +55,11 @@ namespace mdryden.JsonApi
 
 		public ApiResponseBuilder(HttpStatusCode responseCode)
 		{
-			baseResponse = new ApiResponse { ResponseCode = responseCode };
-			itemResponse = new ApiItemResponse { ResponseCode = responseCode };
-			collectionResponse = new ApiCollectionResponse { ResponseCode = responseCode };
+			baseResponse = new ApiResponse();
+			itemResponse = new ApiItemResponse();
+			collectionResponse = new ApiCollectionResponse();
+
+			this.WithMeta(JsonApiConstants.StatusCodeMetaKey, responseCode);
 		}
 
 		private void Validate()

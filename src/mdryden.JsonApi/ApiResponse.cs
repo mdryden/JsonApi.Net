@@ -10,9 +10,7 @@ namespace mdryden.JsonApi
 {
 
 	public class ApiResponse : IApiResponse
-	{
-		public HttpStatusCode ResponseCode { get; set; }
-		
+	{		
 		public ErrorCollection Errors { get; set; }
 		
 		public LinkCollection Links { get; set; }

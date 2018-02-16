@@ -22,7 +22,10 @@ namespace mdryden.JsonApi.Formatters
 			if (response != null)
 			{
 				context.HttpContext.Response.ContentType = JsonApiConstants.ContentType;
-				context.HttpContext.Response.StatusCode = (int)response.ResponseCode;
+				if (response.Meta.TryGetValue(JsonApiConstants.StatusCodeMetaKey, out object value))
+				{
+					context.HttpContext.Response.StatusCode = (int)value;
+				}
 			}
 
 			if (response.HasErrors() || response.IsResource())

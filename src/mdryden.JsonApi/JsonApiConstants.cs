@@ -10,5 +10,7 @@ namespace mdryden.JsonApi
         public const string ContentType = "application/vnd.api+json";
 
 		public const string SelfLinkKey = "self";
+
+		public const string StatusCodeMetaKey = "status";
     }
 }
