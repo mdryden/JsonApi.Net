@@ -7,7 +7,7 @@ using System.Text;
 namespace mdryden.JsonApi
 {
 	[JsonConverter(typeof(NullResourceConverter))]
-    public sealed class NullResource
+    public sealed class NullResource : Resource
     {
     }
 }

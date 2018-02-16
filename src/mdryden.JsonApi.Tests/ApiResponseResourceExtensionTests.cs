@@ -26,7 +26,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var input = new MockObject { Id = "1", Value = "Mock" };
 
-			var response = ApiResponse.Create().WithResource(input, input.Id);
+			var response = ApiResponse.OK().WithResource(input, input.Id).AsItemResponse();
 
 			var output = response.GetResourceAs<MockObject>();
 
@@ -38,7 +38,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var input = new MockStruct { Id = "1", Value = "Mock" };
 
-			var response = ApiResponse.Create().WithResource(input, input.Id);
+			var response = ApiResponse.OK().WithResource(input, input.Id).AsItemResponse();
 
 			var output = response.GetResourceAs<MockStruct>();
 
@@ -52,9 +52,9 @@ namespace mdryden.JsonApi.Tests
 			var input2 = new MockStruct { Id = "2", Value = "Mock 2" };
 			var input = new[] { input1, input2 };
 
-			var response = ApiResponse.Create().WithResources(input, (item) => item.Id);
+			var response = ApiResponse.OK().WithResources(input, (item) => item.Id).AsCollectionResponse();
 
-			var output = response.GetResourceAsEnumerableOf<MockStruct>();
+			var output = response.GetResourcesAs<MockStruct>();
 
 			Assert.Equal(input.Length, output.Count());
 		}
@@ -64,9 +64,9 @@ namespace mdryden.JsonApi.Tests
 		{
 			var input = new List<MockStruct>();
 
-			var response = ApiResponse.Create().WithResources(input, (item) => item.Id);
+			var response = ApiResponse.OK().WithResources(input, (item) => item.Id).AsCollectionResponse();
 
-			var output = response.GetResourceAsEnumerableOf<MockStruct>();
+			var output = response.GetResourcesAs<MockStruct>();
 
 			Assert.Equal(input.Count, output.Count());
 		}

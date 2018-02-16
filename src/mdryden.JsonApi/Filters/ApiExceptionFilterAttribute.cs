@@ -34,14 +34,14 @@ namespace mdryden.JsonApi.Filters
 
 			logger.LogError($"Request for '{context.HttpContext.Request.Path}' threw an exception: '{context.Exception}");
 
-			var response = ApiResponse.Create(responseCode).WithError(error =>
+			var response = ApiResponse.WithStatus(responseCode).WithError(error =>
 			{
 				error.WithStatus(responseCode).WithDetail(detail);
 			});
 
 			response.AddMeta(defaultMetaDataRetriever.GetDefaultMetaData());
 
-			context.Result = new ObjectResult(response);
+			context.Result = new ObjectResult(response.AsResponse());
 		}
 		
 	}

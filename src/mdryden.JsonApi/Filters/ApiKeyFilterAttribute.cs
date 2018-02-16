@@ -66,13 +66,13 @@ namespace mdryden.JsonApi.Filters
             if (!IsKeyValid(context.HttpContext))
             {
 				//errorResponseWriter.WriteErrorAsync(HttpStatusCode.Forbidden, "API key is missing or invalid.", context.HttpContext).Wait();
-				var response = ApiResponse.Create(HttpStatusCode.Forbidden).WithError(error =>
+				var response = ApiResponse.Forbidden().WithError(error =>
 				{
 					error.Status = HttpStatusCode.Forbidden;
 					error.Detail = "API key is missing or invalid";
 				});
 
-				context.Result = new ObjectResult(response);
+				context.Result = new ObjectResult(response.AsResponse());
             }
             else
             {

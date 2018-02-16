@@ -21,12 +21,12 @@ namespace mdryden.JsonApi.Filters
 		public override void OnResultExecuting(ResultExecutingContext context)
 		{
 			var objectResult = context.Result as ObjectResult;
-			var response = objectResult?.Value as ApiResponse;
+			var response = objectResult?.Value as IApiResponse;
 
-			if (response != null && response.HasData())
+			if (response != null && response.IsResource() && !response.HasErrors())
 			{
 				var href = context.HttpContext.Request.Path;
-				response.WithLink(JsonApiConstants.SelfLinkKey, href);
+				response.AddLink(JsonApiConstants.SelfLinkKey, href);
 			}
 		}
 	}

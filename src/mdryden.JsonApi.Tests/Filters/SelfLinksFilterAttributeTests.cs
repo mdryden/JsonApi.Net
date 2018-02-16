@@ -44,13 +44,13 @@ namespace mdryden.JsonApi.Tests
 			var logger = new Mock<ILogger<SelfLinksFilterAttribute>>();
 			var target = new SelfLinksFilterAttribute(logger.Object);
 
-			var responseObject = ApiResponse.Create().WithResource("mock", "Mock result data", "0");
+			var responseObject = ApiResponse.OK().WithResource("mock", "Mock result data", "0").AsItemResponse();
 
 			var context = CreateResultExecutingContext(responseObject);
 
 			target.OnResultExecuting(context);
 
-			var result = (context.Result as ObjectResult).Value as ApiResponse;
+			var result = (context.Result as ObjectResult).Value as IApiResponse;
 
 			var expected = 1;
 			var actual = result.Links?.Count(l => l.Key == JsonApiConstants.SelfLinkKey);
@@ -64,13 +64,13 @@ namespace mdryden.JsonApi.Tests
 			var logger = new Mock<ILogger<SelfLinksFilterAttribute>>();
 			var target = new SelfLinksFilterAttribute(logger.Object);
 
-			var responseObject = ApiResponse.Create().WithError(error => error.Status = System.Net.HttpStatusCode.Forbidden);
+			var responseObject = ApiResponse.OK().WithError(error => error.Status = System.Net.HttpStatusCode.Forbidden).AsItemResponse();
 
 			var context = CreateResultExecutingContext(responseObject);
 
 			target.OnResultExecuting(context);
 
-			var result = (context.Result as ObjectResult).Value as ApiResponse;
+			var result = (context.Result as ObjectResult).Value as IApiResponse;
 
 			var expected = 0;
 			var actual = result.Links?.Count(l => l.Key == JsonApiConstants.SelfLinkKey) ?? 0;
@@ -85,13 +85,13 @@ namespace mdryden.JsonApi.Tests
 			var logger = new Mock<ILogger<SelfLinksFilterAttribute>>();
 			var target = new SelfLinksFilterAttribute(logger.Object);
 
-			var responseObject = ApiResponse.Create();
+			var responseObject = ApiResponse.OK().AsResponse();
 
 			var context = CreateResultExecutingContext(responseObject);
 
 			target.OnResultExecuting(context);
 
-			var result = (context.Result as ObjectResult).Value as ApiResponse;
+			var result = (context.Result as ObjectResult).Value as IApiResponse;
 
 			var expected = 0;
 			var actual = result.Links?.Count(l => l.Key == JsonApiConstants.SelfLinkKey) ?? 0;

@@ -2,7 +2,7 @@
 {
 	public static class IObjectWithLinksExtensions
 	{
-		public static void AddLink(this IObjectWithLinks target, string key, object link)
+		public static void AddLink(this ILinks target, string key, object link)
 		{
 			if (target.Links == null)
 			{

@@ -1,8 +1,8 @@
 ﻿namespace mdryden.JsonApi
 {
-	public static class IObjectWithMetaExtensions
+	public static class MetaExtensions
 	{
-		public static void AddMeta(this IObjectWithMeta target, string key, object value)
+		public static void AddMeta(this IMeta target, string key, object value)
 		{
 			if (target.Meta == null)
 			{
@@ -12,7 +12,7 @@
 			target.Meta.Add(key, value);
 		}
 
-		public static void AddMeta(this IObjectWithMeta target, MetaCollection meta)
+		public static void AddMeta(this IMeta target, MetaCollection meta)
 		{
 			if (meta == null)
 			{

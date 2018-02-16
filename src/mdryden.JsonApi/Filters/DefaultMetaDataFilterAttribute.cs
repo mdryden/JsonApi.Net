@@ -26,7 +26,7 @@ namespace mdryden.JsonApi.Formatters
 		{
 			var objectResult = context.Result as ObjectResult;
 
-			if (objectResult?.Value is ApiResponse response && response.HasContent() == true)
+			if (objectResult?.Value is IApiResponse response && (response.HasErrors() || response.IsResource()))
 			{
 				response.AddMeta(defaultMetaDataRetriever.GetDefaultMetaData());
 			}

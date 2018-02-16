@@ -53,7 +53,7 @@ namespace mdryden.JsonApi.Tests
             exceptionHandlingAttribute.OnException(context);
 
             var expected = HttpStatusCode.InternalServerError;
-			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
+			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode;
 
 			Assert.Equal(expected, actual);
         }
@@ -69,7 +69,7 @@ namespace mdryden.JsonApi.Tests
             exceptionHandlingAttribute.OnException(context);
 
 			var expected = apiException.Status;
-			var actual = ((context.Result as ObjectResult)?.Value as ApiResponse)?.ResponseCode;
+			var actual = ((context.Result as ObjectResult)?.Value as IApiResponse)?.ResponseCode;
 
 			Assert.Equal(expected, actual);
 		}
@@ -89,7 +89,7 @@ namespace mdryden.JsonApi.Tests
 
 			target.OnException(context);
 
-			var response = (context.Result as ObjectResult)?.Value as ApiResponse;
+			var response = (context.Result as ObjectResult)?.Value as IApiResponse;
 
 			Assert.Contains(response.Meta, m => m.Key == "mock");
 			

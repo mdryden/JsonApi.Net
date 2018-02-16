@@ -11,22 +11,24 @@ namespace mdryden.JsonApi.Tests
 		[Fact]
 		public void NoErrorsWithDataTest()
 		{
-			var target = ApiResponse.Create();
+			var target = ApiResponse.OK();
 
 			target.WithResource("mock", "mock value", "0");
+			target.AddError(new Error());
 
-			Assert.Throws<NotSupportedException>(() => target.AddError(new Error()));
+			Assert.Throws<NotSupportedException>(() => target.AsItemResponse());
 
 		}
 
 		[Fact]
 		public void NoDataWithErrorsTest()
 		{
-			var target = ApiResponse.Create();
+			var target = ApiResponse.OK();
 
 			target.AddError(new Error());
+			target.WithResource("mock value", "1");
 
-			Assert.Throws<NotSupportedException>(() => target.Data = "mock value");
+			Assert.Throws<NotSupportedException>(() => target.AsItemResponse());
 		}
 
 

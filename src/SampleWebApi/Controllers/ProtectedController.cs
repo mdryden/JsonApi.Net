@@ -13,11 +13,11 @@ namespace SampleWebApi.Controllers
     public class ProtectedController : Controller
     {
 		[HttpGet("")]
-		public ApiResponse Get()
+		public IApiCollectionResponse Get()
 		{
 			var values = new[] { "one", "two", "three" };
 
-			return ApiResponse.Create().WithResources("string", values, (item) => item);
+			return ApiResponse.OK().WithResources("string", values, (item) => item).AsCollectionResponse();
 		}
     }
 }

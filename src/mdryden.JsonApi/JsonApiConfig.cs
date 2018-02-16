@@ -1,6 +1,7 @@
 ﻿using mdryden.JsonApi;
 using mdryden.JsonApi.Filters;
 using mdryden.JsonApi.Formatters;
+using mdryden.JsonApi.Serialization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 //using mdryden.JsonApi.Formatters;
 using Microsoft.Extensions.Configuration;

@@ -8,25 +8,23 @@ namespace mdryden.JsonApi
 	public static class ApiResponseResourceExtensions
 	{
 
-		public static T GetResourceAs<T>(this ApiResponse response)
+		public static T GetResourceAs<T>(this IApiItemResponse response)
 		{
-			var resource = response.Data as Resource;
-
-			return (T)resource?.Attributes;
+			return (T)response.Data?.Attributes;
 		}
 
-		public static IEnumerable<T> GetResourceAsEnumerableOf<T>(this ApiResponse response)
+		public static IEnumerable<T> GetResourcesAs<T>(this IApiCollectionResponse response)
 		{
-			return (response.Data as IEnumerable<Resource>)?.Select(item => (T)item.Attributes);
+			return response.DataCollection?.Select(item => (T)item.Attributes);
 		}
 		
-		public static ApiResponse WithResource<T>(this ApiResponse response, T data, string id)
+		public static ApiResponseBuilder WithResource<T>(this ApiResponseBuilder response, T data, string id)
 		{
 			var type = typeof(T).Name.ToLower();
 			return response.WithResource(type, data, id);
 		}
 
-		public static ApiResponse WithResource<T>(this ApiResponse response, string type, T data, string id)
+		public static ApiResponseBuilder WithResource<T>(this ApiResponseBuilder response, string type, T data, string id)
 		{
 			if (data == null)
 			{
@@ -45,13 +43,13 @@ namespace mdryden.JsonApi
 			}
 			return response;
 		}
-		public static ApiResponse WithResources<T>(this ApiResponse response, IEnumerable<T> data, Func<T, string> getId)
+		public static ApiResponseBuilder WithResources<T>(this ApiResponseBuilder response, IEnumerable<T> data, Func<T, string> getId)
 		{
 			var type = typeof(T).Name.ToLower();
 			return response.WithResources(type, data, getId);
 		}
 
-		public static ApiResponse WithResources<T>(this ApiResponse response, string type, IEnumerable<T> data, Func<T, string> getId)
+		public static ApiResponseBuilder WithResources<T>(this ApiResponseBuilder response, string type, IEnumerable<T> data, Func<T, string> getId)
 		{
 			var resources = data?.Select(item => new Resource
 			{
@@ -60,7 +58,7 @@ namespace mdryden.JsonApi
 				Attributes = item,
 			});
 
-			response.Data = resources;
+			response.DataCollection = resources.ToList();
 
 			return response;
 		}

@@ -18,7 +18,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var target = new ApiResponseFormatter();
 
-			var responseObject = ApiResponse.Create().WithResource("mock", "mock data", "0");
+			var responseObject = ApiResponse.OK().WithResource("mock", "mock data", "0").AsItemResponse();
 
 			var httpContext = new DefaultHttpContext();
 
@@ -45,7 +45,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var target = new ApiResponseFormatter();
 
-			var responseObject = ApiResponse.Create(responseCode);
+			var responseObject = ApiResponse.WithStatus(responseCode).AsResponse();
 
 			var httpContext = new DefaultHttpContext();
 
@@ -68,7 +68,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var target = new ApiResponseFormatter();
 
-			var responseObject = ApiResponse.Create().WithMeta("mock", "meta data");
+			var responseObject = ApiResponse.OK().WithMeta("mock", "meta data").AsResponse(); ;
 
 			var httpContext = new DefaultHttpContext();
 			httpContext.Response.Body = new MemoryStream();
@@ -94,7 +94,7 @@ namespace mdryden.JsonApi.Tests
 		{
 			var target = new ApiResponseFormatter();
 
-			var responseObject = ApiResponse.Create().WithResource<object>("person", null, "1");
+			var responseObject = ApiResponse.OK().WithResource<object>("person", null, "1").AsItemResponse(); ;
 
 			var httpContext = new DefaultHttpContext();
 			httpContext.Response.Body = new MemoryStream();

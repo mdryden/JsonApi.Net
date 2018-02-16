@@ -17,7 +17,7 @@ namespace mdryden.JsonApi.Formatters
 
 		public Task WriteAsync(OutputFormatterWriteContext context)
 		{
-			var response = context.Object as ApiResponse;
+			var response = context.Object as IApiResponse;
 
 			if (response != null)
 			{
@@ -25,7 +25,7 @@ namespace mdryden.JsonApi.Formatters
 				context.HttpContext.Response.StatusCode = (int)response.ResponseCode;
 			}
 
-			if (response.HasContent())
+			if (response.HasErrors() || response.IsResource())
 			{
 				var json = JsonConvert.SerializeObject(response);
 				return context.HttpContext.Response.WriteAsync(json);
