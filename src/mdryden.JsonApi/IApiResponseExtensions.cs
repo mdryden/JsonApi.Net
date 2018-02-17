@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace mdryden.JsonApi
 {
@@ -11,16 +12,16 @@ namespace mdryden.JsonApi
 
 		public static HttpStatusCode? ResponseCode(this IApiResponse response)
 		{
-			try
+			if (response.Meta.TryGetValue(JsonApiConstants.StatusCodeMetaKey, out object value))
 			{
-				if (response.Meta.TryGetValue(JsonApiConstants.StatusCodeMetaKey, out object value))
-				{
-					return (HttpStatusCode)value;
-				}
+				return Enum.Parse<HttpStatusCode>($"{value}");
 			}
-			catch { }
-
-			return null;
+			else
+			{
+				return null;
+			}
 		}
+
 	}
 }
+

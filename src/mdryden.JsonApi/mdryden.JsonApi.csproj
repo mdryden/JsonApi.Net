@@ -11,11 +11,11 @@
     <PackageProjectUrl>https://github.com/pudds/JsonApi.Net</PackageProjectUrl>
     <Copyright>Michael Dryden</Copyright>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>2.1.0-rc6</Version>
+    <Version>2.1.0</Version>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
     <FileVersion>2.1.0.0</FileVersion>
     <Description>A library for JsonAPI services.  Use .AddJsonApi() method in startup to configure.  Uses interfaces along with formatters and filters to craft JsonAPI compliant responses, an provides a simple way to add API key authentication to controllers or methods.</Description>
-    <PackageReleaseNotes>Add ModelState validation errors extension</PackageReleaseNotes>
+    <PackageReleaseNotes>Bug fix: ResponseCode() extension didn't work after serialization</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
