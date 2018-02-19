@@ -81,6 +81,13 @@ namespace SampleWebApi.Controllers
 			}).AsResponse(); ;
 		}
 
+		[HttpGet("error")]
+		public IApiItemResponse GetError()
+		{
+			ModelState.AddModelError("", "general error");
+			return ApiResponse.BadRequest().WithErrors(ModelState).AsItemResponse();
+
+		}
 
 	}
 }

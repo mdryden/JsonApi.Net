@@ -14,10 +14,11 @@ namespace mdryden.JsonApi.Serialization
 			return typeof(HttpStatusCode).Equals(objectType);
 		}
 
+		public override bool CanRead => false;
+
 		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 		{
-			var jt = JToken.ReadFrom(reader);
-			return jt.Value<HttpStatusCode>();
+			throw new NotImplementedException("HttpStatusConverter.ReadJson is not implemeneted");
 		}
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

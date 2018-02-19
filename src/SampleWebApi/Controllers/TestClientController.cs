@@ -17,7 +17,7 @@ namespace SampleWebApi.Controllers
 		[HttpGet("")]
 		public async Task<TestObject> GetAsync()
 		{
-			var url = "http://localhost:9456/test/item/1";
+			var url = "http://localhost:59553/test/item/1";
 			using (var client = new HttpClient())
 			{
 				var result = await client.GetStringAsync(url);
@@ -27,5 +27,18 @@ namespace SampleWebApi.Controllers
 			}
 		}
 
-    }
+		[HttpGet("error")]
+		public async Task<TestObject> GetErrorAsync()
+		{
+			var url = "http://localhost:59553/test/error";
+			using (var client = new HttpClient())
+			{
+				var result = await client.GetStringAsync(url);
+				var response = JsonConvert.DeserializeObject<ApiItemResponse>(result);
+				var item = response.GetResourceAs<TestObject>();
+				return item;
+			}
+		}
+
+	}
 }
