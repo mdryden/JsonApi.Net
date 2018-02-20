@@ -1,4 +1,5 @@
 ﻿using mdryden.JsonApi;
+using mdryden.JsonApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SampleWebApi.Models;
@@ -18,10 +19,9 @@ namespace SampleWebApi.Controllers
 		public async Task<TestObject> GetAsync()
 		{
 			var url = "http://localhost:59553/test/item/1";
-			using (var client = new HttpClient())
+			using (var client = new JsonServiceClient())
 			{
-				var result = await client.GetStringAsync(url);
-				var response = JsonConvert.DeserializeObject<ApiItemResponse>(result);
+				var response = await client.GetResourceAsync(url);
 				var item = response.GetResourceAs<TestObject>();
 				return item;
 			}
@@ -31,10 +31,9 @@ namespace SampleWebApi.Controllers
 		public async Task<TestObject> GetErrorAsync()
 		{
 			var url = "http://localhost:59553/test/error";
-			using (var client = new HttpClient())
+			using (var client = new JsonServiceClient())
 			{
-				var result = await client.GetStringAsync(url);
-				var response = JsonConvert.DeserializeObject<ApiItemResponse>(result);
+				var response = await client.GetResourceAsync(url);
 				var item = response.GetResourceAs<TestObject>();
 				return item;
 			}

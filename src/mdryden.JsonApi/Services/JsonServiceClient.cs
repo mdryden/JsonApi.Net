@@ -7,8 +7,26 @@ using System.Threading.Tasks;
 
 namespace mdryden.JsonApi.Services
 {
-    public class JsonServiceClient
+	public class JsonServiceClient : IDisposable
 	{
+		private readonly HttpClient _client;
+
+		public JsonServiceClient()
+		{
+			_client = new HttpClient();
+		}
+
+		public JsonServiceClient(Uri baseAddress)
+			: this()
+		{
+			_client.BaseAddress = baseAddress;
+		}
+
+		public JsonServiceClient(HttpClient client)
+		{
+			_client = client;
+		}
+
 		private StringContent CreateContent(string jsonObject)
 		{
 			return new StringContent(jsonObject.ToString(), Encoding.UTF8, JsonApiConstants.ContentType);
@@ -59,55 +77,49 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		public async Task<IApiResponse> DeleteResourceAsync(Uri uri)
+		protected async Task<IApiResponse> DeleteResourceAsync(string requestUri)
 		{
-			using (var client = new HttpClient())
-			{
-				var response = await client.DeleteAsync(uri);
-				return await TryReadResponseAsync(response);
-			}
+			var response = await _client.DeleteAsync(requestUri);
+			return await TryReadResponseAsync(response);
 		}
 
-		public async Task<IApiItemResponse> GetResourceAsync(Uri uri)
+		public async Task<IApiItemResponse> GetResourceAsync(string requestUri)
 		{
-			using (var client = new HttpClient())
-			{
-				var result = await client.GetStringAsync(uri);
-				return JsonConvert.DeserializeObject<ApiItemResponse>(result);
-			}
+			var result = await _client.GetStringAsync(requestUri);
+			return JsonConvert.DeserializeObject<ApiItemResponse>(result);
+
 		}
 
-		public async Task<IApiCollectionResponse> GetResourceCollectionAsync(Uri uri)
+		public async Task<IApiCollectionResponse> GetResourceCollectionAsync(string requestUri)
 		{
-			using (var client = new HttpClient())
-			{
-				var result = await client.GetStringAsync(uri);
-				return JsonConvert.DeserializeObject<ApiCollectionResponse>(result);
-			}
+			var result = await _client.GetStringAsync(requestUri);
+			return JsonConvert.DeserializeObject<ApiCollectionResponse>(result);
+
 		}
 
-		public async Task<IApiItemResponse> PostResourceAsync<T>(Uri uri, T content)
+		public async Task<IApiItemResponse> PostResourceAsync<T>(string requestUri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			using (var client = new HttpClient())
-			{
-				var response = await client.PostAsync(uri, stringContent);
-				return await TryReadItemResponseAsync(response);
-			}
+			var response = await _client.PostAsync(requestUri, stringContent);
+			return await TryReadItemResponseAsync(response);
+
 		}
 
-		public async Task<IApiItemResponse> PutResourceAsync<T>(Uri uri, T content)
+		public async Task<IApiItemResponse> PutResourceAsync<T>(string requestUri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			using (var client = new HttpClient())
-			{
-				var response = await client.PutAsync(uri, stringContent);
-				return await TryReadItemResponseAsync(response);
-			}
+			var response = await _client.PutAsync(requestUri, stringContent);
+			return await TryReadItemResponseAsync(response);
+
+		}
+
+		public void Dispose()
+		{
+			_client.Dispose();
 		}
 	}
 }
