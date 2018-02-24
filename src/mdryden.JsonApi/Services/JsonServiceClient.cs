@@ -9,8 +9,9 @@ namespace mdryden.JsonApi.Services
 {
 	public class JsonServiceClient : IDisposable
 	{
-		private readonly HttpClient _client;
 
+		private readonly HttpClient _client;
+		
 		public JsonServiceClient()
 		{
 			_client = new HttpClient();
@@ -36,7 +37,7 @@ namespace mdryden.JsonApi.Services
 		{
 			var json = await responseMessage.Content?.ReadAsStringAsync();
 
-			if (json != null)
+			if (!string.IsNullOrEmpty(json))
 			{
 				var response = JsonConvert.DeserializeObject<ApiResponse>(json);
 				return response;
@@ -47,8 +48,9 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		private async Task<IApiItemResponse> TryReadItemResponseAsync(HttpResponseMessage responseMessage)
+		protected async Task<IApiItemResponse> TryReadItemResponseAsync(HttpResponseMessage responseMessage)
 		{
+
 			var json = await responseMessage.Content?.ReadAsStringAsync();
 
 			if (json != null)
@@ -62,7 +64,7 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		private async Task<IApiCollectionResponse> TryReadCollectionResponseAsync(HttpResponseMessage responseMessage)
+		protected async Task<IApiCollectionResponse> TryReadCollectionResponseAsync(HttpResponseMessage responseMessage)
 		{
 			var json = await responseMessage.Content?.ReadAsStringAsync();
 
@@ -77,7 +79,7 @@ namespace mdryden.JsonApi.Services
 			}
 		}
 
-		protected async Task<IApiResponse> DeleteResourceAsync(string requestUri)
+		public async Task<IApiResponse> DeleteResourceAsync(string requestUri)
 		{
 			var response = await _client.DeleteAsync(requestUri);
 			return await TryReadResponseAsync(response);
@@ -85,36 +87,69 @@ namespace mdryden.JsonApi.Services
 
 		public async Task<IApiItemResponse> GetResourceAsync(string requestUri)
 		{
-			var result = await _client.GetStringAsync(requestUri);
-			return JsonConvert.DeserializeObject<ApiItemResponse>(result);
+			var response = await _client.GetAsync(requestUri);
+			return await TryReadItemResponseAsync(response);
 
 		}
 
 		public async Task<IApiCollectionResponse> GetResourceCollectionAsync(string requestUri)
 		{
-			var result = await _client.GetStringAsync(requestUri);
-			return JsonConvert.DeserializeObject<ApiCollectionResponse>(result);
-
+			var response = await _client.GetAsync(requestUri);
+			return await TryReadCollectionResponseAsync(response);
 		}
 
-		public async Task<IApiItemResponse> PostResourceAsync<T>(string requestUri, T content)
+		public async Task<IApiResponse> PostResourceAsync<T>(string requestUri, T content)
+		{
+			var jsonObject = JsonConvert.SerializeObject(content);
+			var stringContent = CreateContent(jsonObject);
+
+			var response = await _client.PostAsync(requestUri, stringContent);
+			return await TryReadResponseAsync(response);
+		}
+
+		public async Task<IApiItemResponse> PostResourceWithItemResponseAsync<T>(string requestUri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
 			var response = await _client.PostAsync(requestUri, stringContent);
 			return await TryReadItemResponseAsync(response);
-
 		}
 
-		public async Task<IApiItemResponse> PutResourceAsync<T>(string requestUri, T content)
+		public async Task<IApiCollectionResponse> PostResourceWithCollectionResponseAsync<T>(string requestUri, T content)
+		{
+			var jsonObject = JsonConvert.SerializeObject(content);
+			var stringContent = CreateContent(jsonObject);
+
+			var response = await _client.PostAsync(requestUri, stringContent);
+			return await TryReadCollectionResponseAsync(response);
+		}
+
+		public async Task<IApiResponse> PutResourceAsync<T>(string requestUri, T content)
+		{
+			var jsonObject = JsonConvert.SerializeObject(content);
+			var stringContent = CreateContent(jsonObject);
+
+			var response = await _client.PutAsync(requestUri, stringContent);
+			return await TryReadResponseAsync(response);
+		}
+
+		public async Task<IApiItemResponse> PutResourceWithItemResponseAsync<T>(string requestUri, T content)
 		{
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
 			var response = await _client.PutAsync(requestUri, stringContent);
 			return await TryReadItemResponseAsync(response);
+		}
 
+		public async Task<IApiCollectionResponse> PutResourceWithCollectionResponseAsync<T>(string requestUri, T content)
+		{
+			var jsonObject = JsonConvert.SerializeObject(content);
+			var stringContent = CreateContent(jsonObject);
+
+			var response = await _client.PutAsync(requestUri, stringContent);
+			return await TryReadCollectionResponseAsync(response);
 		}
 
 		public void Dispose()

@@ -43,11 +43,11 @@ namespace SampleWebApi.Controllers
 		}
 
 		[HttpGet("noitems")]
-		public IApiItemResponse NoItemsTest()
+		public IApiCollectionResponse NoItemsTest()
 		{
 			var items = new List<TestObject>();
 
-			return ApiResponse.OK().WithResources(items, (input) => input.Id.ToString()).AsItemResponse();
+			return ApiResponse.OK().WithResources(items, (input) => input.Id.ToString()).AsCollectionResponse();
 		}
 
 		[HttpDelete("delete/{value}")]
@@ -72,7 +72,7 @@ namespace SampleWebApi.Controllers
 			return response.AsResponse(); ;
 		}
 
-		[HttpPost("{value}")]
+		[HttpPost("post")]
 		public IApiResponse Post(string value)
 		{
 			return ApiResponse.Forbidden().WithError(error =>
@@ -81,12 +81,51 @@ namespace SampleWebApi.Controllers
 			}).AsResponse(); ;
 		}
 
+		[HttpPost("post/andreturn/item")]
+		public IApiItemResponse PostAndReturn([FromBody]object value)
+		{
+			return ApiResponse.Created().WithResource(value, "1").AsItemResponse();
+		}
+
+		[HttpPost("post/andreturn/collection")]
+		public IApiCollectionResponse PostAndReturnCollection([FromBody]object value)
+		{
+			return ApiResponse.Created().WithResources(new[] { value }, (item) => "1").AsCollectionResponse();
+		}
+
+
+		[HttpPut("put")]
+		public IApiResponse Put(string value)
+		{
+			return ApiResponse.Forbidden().WithError(error =>
+			{
+				error.WithDetail("Can't do that");
+			}).AsResponse(); ;
+		}
+
+		[HttpPut("put/andreturn/item")]
+		public IApiItemResponse PutAndReturn([FromBody]object value)
+		{
+			return ApiResponse.Created().WithResource(value, "1").AsItemResponse();
+		}
+
+		[HttpPut("put/andreturn/collection")]
+		public IApiCollectionResponse PutAndReturnCollection([FromBody]object value)
+		{
+			return ApiResponse.Created().WithResources(new[] { value }, (item) => "1").AsCollectionResponse();
+		}
+
 		[HttpGet("error")]
 		public IApiItemResponse GetError()
 		{
 			ModelState.AddModelError("", "general error");
 			return ApiResponse.BadRequest().WithErrors(ModelState).AsItemResponse();
 
+		}
+		[HttpGet("exception")]
+		public ApiResponse Get()
+		{
+			throw new NotImplementedException();
 		}
 
 	}
