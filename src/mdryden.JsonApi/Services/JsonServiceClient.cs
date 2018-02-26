@@ -10,22 +10,22 @@ namespace mdryden.JsonApi.Services
 	public class JsonServiceClient : IDisposable
 	{
 
-		private readonly HttpClient _client;
+		public HttpClient Client { get; private set; }
 		
 		public JsonServiceClient()
 		{
-			_client = new HttpClient();
+			Client = new HttpClient();
 		}
 
 		public JsonServiceClient(Uri baseAddress)
 			: this()
 		{
-			_client.BaseAddress = baseAddress;
+			Client.BaseAddress = baseAddress;
 		}
 
 		public JsonServiceClient(HttpClient client)
 		{
-			_client = client;
+			Client = client;
 		}
 
 		private StringContent CreateContent(string jsonObject)
@@ -81,20 +81,20 @@ namespace mdryden.JsonApi.Services
 
 		public async Task<IApiResponse> DeleteResourceAsync(string requestUri)
 		{
-			var response = await _client.DeleteAsync(requestUri);
+			var response = await Client.DeleteAsync(requestUri);
 			return await TryReadResponseAsync(response);
 		}
 
 		public async Task<IApiItemResponse> GetResourceAsync(string requestUri)
 		{
-			var response = await _client.GetAsync(requestUri);
+			var response = await Client.GetAsync(requestUri);
 			return await TryReadItemResponseAsync(response);
 
 		}
 
 		public async Task<IApiCollectionResponse> GetResourceCollectionAsync(string requestUri)
 		{
-			var response = await _client.GetAsync(requestUri);
+			var response = await Client.GetAsync(requestUri);
 			return await TryReadCollectionResponseAsync(response);
 		}
 
@@ -103,7 +103,7 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PostAsync(requestUri, stringContent);
+			var response = await Client.PostAsync(requestUri, stringContent);
 			return await TryReadResponseAsync(response);
 		}
 
@@ -112,7 +112,7 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PostAsync(requestUri, stringContent);
+			var response = await Client.PostAsync(requestUri, stringContent);
 			return await TryReadItemResponseAsync(response);
 		}
 
@@ -121,7 +121,7 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PostAsync(requestUri, stringContent);
+			var response = await Client.PostAsync(requestUri, stringContent);
 			return await TryReadCollectionResponseAsync(response);
 		}
 
@@ -130,7 +130,7 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PutAsync(requestUri, stringContent);
+			var response = await Client.PutAsync(requestUri, stringContent);
 			return await TryReadResponseAsync(response);
 		}
 
@@ -139,7 +139,7 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PutAsync(requestUri, stringContent);
+			var response = await Client.PutAsync(requestUri, stringContent);
 			return await TryReadItemResponseAsync(response);
 		}
 
@@ -148,13 +148,13 @@ namespace mdryden.JsonApi.Services
 			var jsonObject = JsonConvert.SerializeObject(content);
 			var stringContent = CreateContent(jsonObject);
 
-			var response = await _client.PutAsync(requestUri, stringContent);
+			var response = await Client.PutAsync(requestUri, stringContent);
 			return await TryReadCollectionResponseAsync(response);
 		}
 
 		public void Dispose()
 		{
-			_client.Dispose();
+			Client.Dispose();
 		}
 	}
 }
